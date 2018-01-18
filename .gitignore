@@ -1,4 +1,6 @@
 node_modules
 src/client/node_modules
+src/client/dist
 package-lock.json
 src/client/package-lock.json
+
