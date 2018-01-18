@@ -11,13 +11,13 @@ module.exports = {
         }
         return user;
     },
-    findUserByToken: function(token) {
-        return User.findOne({
+    findUserByToken: async function(token) {
+        return await User.findOne({
             token
         });
     },
-    findUserByEmail: function(email) {
-        return User.findOne({
+    findUserByEmail: async function(email) {
+        return await User.findOne({
             email
         });
     },

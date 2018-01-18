@@ -11,8 +11,8 @@ passport.serializeUser((user, done) => {
 });
 
 //Once we receive a serialized value, how do we get the user?
-passport.deserializeUser((cookieValue, done) => {
-    const user = User.findUserByToken(cookieValue);
+passport.deserializeUser(async(cookieValue, done) => {
+    const user = await User.findUserByToken(cookieValue);
     if (user) {
         done(null, user);
     } else {
@@ -28,6 +28,11 @@ passport.use(new GooglePassportStrategy({
     clientSecret: configs.GOOGLE_OAUTH_CLIENT_SECRET,
     callbackURL: configs.GOOGLE_OAUTH_REDIRECT_URL,
 }, async function(accessToken, refreshToken, profile, done) {
+    if (!profile) {
+        done({
+            type: "USER_NOT_AUTHENTICATED"
+        }, null);
+    }
     const userDetails = {
         name: profile.displayName,
         email: profile.emails[0].value,
@@ -50,7 +55,7 @@ passport.use(new GooglePassportStrategy({
 module.exports.configureSession = (app) => {
     app.use(cookieSession({
         maxAge: configs.SESSION_EXPIRY_TIME,
-        secret: configs.SESSION_COOKIE_SECRET
+        keys: [configs.SESSION_COOKIE_SECRET]
     }));
     app.use(passport.initialize());
     app.use(passport.session());
